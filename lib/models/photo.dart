@@ -26,13 +26,13 @@ class Photo {
 }
 
 class Album {
-  final List<Photo> album;
+  final List<Photo> photos;
 
-  Album({required this.album});
+  Album({required this.photos});
 
   factory Album.fromJson(List<dynamic> parseJson){
-    List<Photo> album = <Photo>[];
-    album = parseJson.map((i) => Photo.fromJson(i)).toList();
-    return Album(album: album);
+    List<Photo> _photos = <Photo>[];
+    _photos = parseJson.map((i) => Photo.fromJson(i)).toList();
+    return Album(photos: _photos);
   }
 }

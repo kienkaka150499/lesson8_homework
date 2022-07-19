@@ -2,11 +2,12 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'api_info/api_infor.dart';
 import 'models/photo.dart';
 
 Future<Album> fetchAlbum() async {
   final response =
-      await http.get(Uri.parse('https://jsonplaceholder.typicode.com/photos'));
+      await http.get(Uri.parse(URL_GET_PHOTOS));
 
   if (response.statusCode == 200) {
     return Album.fromJson(jsonDecode(response.body));
@@ -44,7 +45,7 @@ class _MyAppState extends State<MyApp> {
           builder: (BuildContext context, snapshot) {
             if (snapshot.hasData) {
               final Album album = snapshot.data!;
-              return _buildListView(album);
+              return _buildListView(context, album);
             } else {
               return const Center(
                 child: CircularProgressIndicator(),
@@ -56,16 +57,22 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  Widget _buildListView(Album album) {
+  Widget _buildListView(BuildContext context, Album album) {
+    
+    var _width = MediaQuery.of(context).size.width;
+    var _height = MediaQuery.of(context).size.height;
+
+    print ('Width: $_width , Height: $_height');
+    
     return Container(
-      width: 440,
-      height: 700,
+      width: _width,
+      height: _height,
       margin: const EdgeInsets.all(20),
       child: ListView.separated(
           physics: const BouncingScrollPhysics(),
           itemBuilder: (context, index) {
             return Container(
-              width: 440,
+              width: _width,
               height: 120,
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
@@ -76,7 +83,7 @@ class _MyAppState extends State<MyApp> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(25),
                     child: Image.network(
-                      album.album[index].url,
+                      album.photos[index].url,
                       width: 80,
                       height: 80,
                     ),
@@ -90,10 +97,10 @@ class _MyAppState extends State<MyApp> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'id: ${album.album[index].id}',
+                          'id: ${album.photos[index].id}',
                           style: const TextStyle(fontSize: 18),
                         ),
-                        Text('title: ${album.album[index].title}')
+                        Text('title: ${album.photos[index].title}')
                       ],
                     ),
                   )
@@ -102,7 +109,7 @@ class _MyAppState extends State<MyApp> {
             );
           },
           separatorBuilder: (context, index) => const Divider(),
-          itemCount: album.album.length),
+          itemCount: album.photos.length),
     );
   }
 }
